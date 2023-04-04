@@ -1,0 +1,142 @@
+import FormWrapper from '@/components/Form/FormWrapper';
+import { FieldInput } from '@/components/Ui/FieldInput';
+import { API } from '@/constant';
+import {
+  UserContext,
+  useContextUser,
+  useIdUsers,
+  usersStore,
+} from '@/context/UserContext';
+import useUserInfo, {
+  INITIAL_DATA_USER,
+  TypeUserForm,
+  UserRegisterType,
+} from '@/hooks/useUserInfo';
+import axios from 'axios';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useStore } from 'zustand';
+import Cookies from 'js-cookie';
+
+interface Props {
+  setIsLogin: (value: boolean) => void;
+}
+
+const LoginPage = ({ setIsLogin }: Props) => {
+  const router = useRouter();
+  const [showPw, setShowPw] = useState(false);
+  const [sendData, setSendData] = useState(false);
+  const { data, setData, onChangeField } = useUserInfo();
+  const idUser = useIdUsers();
+  // console.log(data);
+  const loging = async () => {
+    const value = {
+      data: {
+        username: data.username,
+        password: data.password,
+      },
+    };
+    await axios
+      .post(`${process.env.NEXT_PUBLIC_API}/user/login`, {
+        data: {
+          username: data.username,
+          password: data.password,
+        },
+      })
+      .then(async (res) => {
+        let value = res.data;
+        router.push('/');
+        setSendData(false);
+        idUser(value?.data?.id);
+        Cookies.set('_cxrf', value?.data?._cxrf, {
+          expires: 60 * 60 * 1000,
+          sameSite: 'strict',
+          secure: true,
+        });
+        console.log();
+        return res.data;
+      });
+  };
+  useEffect(() => {
+    if (sendData === false) return;
+    loging();
+    return () => {};
+  }, [sendData, data]);
+
+  return (
+    <div className="flex flex-col">
+      <FormWrapper title="Login">
+        <div className="flex flex-col">
+          <FieldInput
+            placeHolder="username/email"
+            titleLabel="username"
+            htmlFor="username"
+            type="text"
+            required={true}
+            autoComplete={'off'}
+            value={data.username}
+            onChange={(e) => onChangeField({ username: e.target.value })}
+            // errors={errors}
+          />
+          <FieldInput
+            placeHolder="password"
+            titleLabel="password"
+            htmlFor="password"
+            type={showPw ? 'text' : 'password'}
+            required={true}
+            showPw={showPw}
+            isPassword={true}
+            autoComplete={'off'}
+            value={data.password}
+            onChange={(e) => onChangeField({ password: e.target.value })}
+            onShowPassword={() => setShowPw(!showPw)}
+            // errors={errors}
+          />
+          <span className="py-3 flex flex-col items-center justify-between">
+            <div className="flex flex-row items-center">
+              <p className="text-slate-500">Not have account ? </p>
+              <Link
+                href={'/register'}
+                className="p-2 hover:text-[#f3e858]"
+                onClick={() => {
+                  setIsLogin(false);
+                  router.push('/register');
+                }}
+              >
+                Register
+              </Link>
+            </div>
+            <div className="flex flex-row items-center">
+              <p className="text-slate-500">Forgot Password ? </p>
+              <Link
+                href={'/login'}
+                className="p-2 hover:text-[#f3e858]"
+                onClick={() => {
+                  setIsLogin(false);
+                  router.push('/login');
+                }}
+              >
+                Reset Password
+              </Link>
+            </div>
+          </span>
+          <button
+            className="py-3 bg-[#f3e858] text-black my-4"
+            type="submit"
+            onClick={() => {
+              setIsLogin(true);
+              setSendData(true);
+            }}
+          >
+            LOGIN
+          </button>
+        </div>
+      </FormWrapper>
+    </div>
+  );
+};
+
+export default LoginPage;
+
+// export const getServerSideProps = () => {};
