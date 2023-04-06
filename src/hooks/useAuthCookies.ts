@@ -5,6 +5,7 @@ const useAuthCookies = () => {
   const authCookies = Cookies.get('_cxrf') as string;
   const [isValid, setIsValid] = useState(false);
 
+
   useEffect(() => {
     if (authCookies !== undefined) {
       setIsValid(true);

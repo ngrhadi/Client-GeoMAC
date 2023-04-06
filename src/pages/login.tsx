@@ -4,7 +4,11 @@ import { API } from '@/constant';
 import {
   UserContext,
   useContextUser,
+  useCurrentUser,
   useIdUsers,
+  useTokenUser,
+  useUserNameCtx,
+  useUserSetter,
   usersStore,
 } from '@/context/UserContext';
 import useUserInfo, {
@@ -18,6 +22,7 @@ import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useStore } from 'zustand';
 import Cookies from 'js-cookie';
+import useAuthCookies from '@/hooks/useAuthCookies';
 
 interface Props {
   setIsLogin: (value: boolean) => void;
@@ -27,40 +32,44 @@ const LoginPage = ({ setIsLogin }: Props) => {
   const router = useRouter();
   const [showPw, setShowPw] = useState(false);
   const [sendData, setSendData] = useState(false);
-  const { data, setData, onChangeField } = useUserInfo();
+  const { data, onChangeField } = useUserInfo();
   const idUser = useIdUsers();
-  // console.log(data);
-  const loging = async () => {
-    const value = {
-      data: {
-        username: data.username,
-        password: data.password,
-      },
-    };
-    await axios
-      .post(`${process.env.NEXT_PUBLIC_API}/user/login`, {
+  const tokenUser = useTokenUser();
+  const nameUser = useUserNameCtx();
+
+  useEffect(() => {
+    let name = data.username;
+    let password = data.password;
+    if (sendData === false) {
+      return;
+    } else {
+      API.post(`${process.env.NEXT_PUBLIC_API}/user/login`, {
         data: {
-          username: data.username,
-          password: data.password,
+          username: name,
+          password: password,
         },
       })
-      .then(async (res) => {
-        let value = res.data;
-        router.push('/');
-        setSendData(false);
-        idUser(value?.data?.id);
-        Cookies.set('_cxrf', value?.data?._cxrf, {
-          expires: 60 * 60 * 1000,
-          sameSite: 'strict',
-          secure: true,
+        .then(async (res) => {
+          let value = res.data;
+          router.push('/');
+          setSendData(false);
+          idUser(value?.data?.id);
+          tokenUser(value?.data?.token);
+          nameUser(value?.data?.username);
+          Cookies.set('_cxrf', value?.data?._cxrf, {
+            expires: 60 * 60 * 1000,
+            sameSite: 'strict',
+            secure: true,
+          });
+
+          console.log();
+          return res.data;
+        })
+        .catch((error) => {
+          setSendData(false);
         });
-        console.log();
-        return res.data;
-      });
-  };
-  useEffect(() => {
-    if (sendData === false) return;
-    loging();
+    }
+
     return () => {};
   }, [sendData, data]);
 

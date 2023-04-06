@@ -4,7 +4,7 @@ const MenuOpen = () => {
   return (
     <div>
       <svg
-        className="h-8 w-8 text-white"
+        className="h-5 w-5 lg:h-8 lg:w-8 text-white"
         width="24"
         height="24"
         viewBox="0 0 24 24"

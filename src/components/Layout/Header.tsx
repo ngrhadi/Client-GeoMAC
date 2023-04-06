@@ -17,8 +17,8 @@ interface Props {
 const Header = ({ sideBar, setSidebar }: Props) => {
   const router = useRouter();
   return (
-    <section className="bg-zinc-700/40 sticky top-0 bg-[#5EAB44]">
-      <div className="lg:w-screen max-w-screen-2xl mx-auto h-14 lg:h-20 justify-between flex flex-row items-center text-sm lg:text-lg">
+    <section className="bg-zinc-700 sticky top-0 z-50">
+      <div className="lg:w-screen max-w-screen-2xl mx-auto h-12 lg:h-20 justify-between flex flex-row items-center text-sm lg:text-lg">
         <div className="flex flex-row gap-5 pl-5 lg:pl-20 items-center">
           <div className="flex md:hidden lg:hidden">
             <button onClick={() => setSidebar(!sideBar)}>
@@ -28,7 +28,7 @@ const Header = ({ sideBar, setSidebar }: Props) => {
           <div>
             <Image
               src={logo}
-              width={80}
+              width={50}
               height={10}
               alt="logo-geo"
               className="rotate-0 lg:rotate-6"
@@ -36,7 +36,7 @@ const Header = ({ sideBar, setSidebar }: Props) => {
             />
           </div>
           <div className="flex md:flex lg:hidden flex-row md:flex-row">
-            <p className="text-lg -ml-6">GeoMAC</p>
+            <p className="text-sm lg:text-lg -ml-6">GeoMAC</p>
           </div>
           <div className="hidden md:flex lg:flex flex-row gap-5">
             <Link

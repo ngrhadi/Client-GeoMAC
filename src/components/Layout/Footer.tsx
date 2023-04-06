@@ -14,8 +14,8 @@ interface Props {
 export default function Footer({ setHelperRoute, setHelperParams }: Props) {
   const router = useRouter();
   return (
-    <div className="max-w-screen-2xl mx-auto sticky">
-      <footer className="relative flex flex-row flex-wrap items-center justify-center gap-y-6 gap-x-12 border-t border-blue-gray-50 py-3 lg:py-3 px-3 lg:px-16 text-center md:justify-between">
+    <div className="max-w-screen-2xl mx-auto sticky ">
+      <footer className="relative flex flex-row flex-wrap items-center justify-center gap-y-6 gap-x-12 border-t border-blue-gray-50 py-[5px] lg:py-3 px-3 lg:px-16 text-center md:justify-between">
         <p
           color="blue-gray"
           className="hidden lg:block md:block font-normal text-sm lg:text-md"
@@ -78,7 +78,7 @@ export default function Footer({ setHelperRoute, setHelperParams }: Props) {
             </li>
           </ul>
         </div>
-        <div className="flex md:hidden lg:hidden justify-around w-full">
+        <div className="flex md:hidden lg:hidden justify-around w-full ">
           <button
             onClick={() => {
               setHelperRoute(false);

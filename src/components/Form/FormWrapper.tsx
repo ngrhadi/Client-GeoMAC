@@ -8,7 +8,7 @@ interface FormWrapperProps {
 const FormWrapper = ({ title, children }: FormWrapperProps) => {
   return (
     <div>
-      <h1 className="w-full align-middle text-center text-2xl font-bold py-4">
+      <h1 className="w-full align-middle text-center text-lg lg:text-2xl font-bold py-4">
         {title}
       </h1>
       <div>{children}</div>

@@ -1,10 +1,10 @@
 import React from 'react';
 
-const LogoutIcon = () => {
+const PlusIcon = () => {
   return (
     <div>
       <svg
-        className="h-5 w-5 lg:h-8 lg:w-8 text-white"
+        className="h-8 w-8 text-white hover:text-yellow-400"
         width="24"
         height="24"
         viewBox="0 0 24 24"
@@ -16,11 +16,12 @@ const LogoutIcon = () => {
       >
         {' '}
         <path stroke="none" d="M0 0h24v24H0z" />{' '}
-        <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />{' '}
-        <path d="M7 12h14l-3 -3m0 6l3 -3" />
+        <rect x="4" y="4" width="16" height="16" rx="2" />{' '}
+        <line x1="9" y1="12" x2="15" y2="12" />{' '}
+        <line x1="12" y1="9" x2="12" y2="15" />
       </svg>
     </div>
   );
 };
 
-export default LogoutIcon;
+export default PlusIcon;

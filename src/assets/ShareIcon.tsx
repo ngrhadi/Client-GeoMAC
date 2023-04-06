@@ -4,7 +4,7 @@ const ShareIcon = () => {
   return (
     <div>
       <svg
-        className="h-8 w-8 text-white"
+        className="h-5 w-5 text-white"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
