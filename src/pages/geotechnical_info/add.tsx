@@ -66,30 +66,6 @@ const Page = () => {
   }
 
   console.log('filesss', data.doc_path);
-  // const handleChangeUploadFile = (event: Event) => {
-  //   event.preventDefault();
-  //   event.stopPropagation();
-  //   const element = event.currentTarget as HTMLInputElement;
-  //   let fileList: FileList | null = element.files;
-  //   if (fileList) {
-  //     console.log('FileUpload -> files', fileList);
-  //     //  onChangeField({ doc_path: (prev) => [prev, ...fileList] });
-  //   }
-  //   // const files = event.target.files;
-
-  //   // if (files.length > 0) {
-  //   //   for (let i = 0; i < files.length; i++) {
-  //   //     setnameFile([files[i].name]);
-  //   //     const reader = new FileReader();
-  //   //     reader.onload = (e) => {
-  //   //       setImgReady(true);
-  //   //       setImgList((prev) => [...prev, e.target.result.replace(/ /g, '')]);
-  //   //     };
-  //   //     reader.readAsDataURL(files[i]);
-  //   //   }
-  //   // }
-  // };
-
   const {
     steps,
     stepIndex,

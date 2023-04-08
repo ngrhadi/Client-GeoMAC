@@ -5,39 +5,34 @@ import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import { useState } from 'react';
 
-interface Calendar {
-  year: string | number;
-  month: string | number;
-}
+// interface Calendar {
+//   year;
+//   month;
+// }
 
 dayjs.extend(weekday);
 dayjs.extend(weekOfYear);
 
-const INITIAL_YEAR = dayjs().format('YYYY');
-const INITIAL_MONTH = dayjs().format('M');
+const INITIAL_YEAR = dayjs().format('YYYY') as any | number | string;
+const INITIAL_MONTH = dayjs().format('M') as any | number | string;
 const TODAY = dayjs().format('YYYY-MM-DD');
-var selectedMonth = dayjs(
-  new Date(INITIAL_YEAR, INITIAL_MONTH - 1, 1).toString()
-);
+var selectedMonth = dayjs(new Date(INITIAL_YEAR, INITIAL_MONTH - 1, 1));
 var currentMonthDays = createDaysForCurrentMonth(INITIAL_YEAR, INITIAL_MONTH);
 var previousMonthDays = createDaysForPreviousMonth(
   INITIAL_YEAR,
-  INITIAL_MONTH,
-  currentMonthDays[0]
+  INITIAL_MONTH
+  // currentMonthDays[0]
 );
 var nextMonthDays = createDaysForNextMonth(INITIAL_YEAR, INITIAL_MONTH);
 
-function getNumberOfDaysInMonth(year: string | number, month: string | number) {
+function getNumberOfDaysInMonth(year: any, month: any) {
   return dayjs(`${year}-${month}-01`).daysInMonth();
 }
 function getWeekday(date: string) {
   return dayjs(date).weekday();
 }
 
-function createDaysForCurrentMonth(
-  year: string | number,
-  month: string | number
-) {
+function createDaysForCurrentMonth(year: any, month: any) {
   return [...Array(getNumberOfDaysInMonth(year, month))].map((day, index) => {
     return {
       date: dayjs(`${year}-${month}-${index + 1}`).format('YYYY-MM-DD'),
@@ -47,11 +42,8 @@ function createDaysForCurrentMonth(
     };
   });
 }
-
-function createDaysForPreviousMonth(
-  year: string | number,
-  month: string | number
-) {
+let isCurrentMonth = false;
+function createDaysForPreviousMonth(year: any, month: any) {
   const firstDayOfTheMonthWeekday = getWeekday(currentMonthDays[0].date);
   const previousMonth = dayjs(`${year}-${month}-01`).subtract(1, 'month');
   const visibleNumberOfDaysFromPreviousMonth = firstDayOfTheMonthWeekday
@@ -68,12 +60,12 @@ function createDaysForPreviousMonth(
         }`
       ).format('YYYY-MM-DD'),
       dayOfMonth: previousMonthLastMondayDayOfMonth + index,
-      isCurrentMonth: false,
+      // isCurrentMonth: false,
     };
   });
 }
 
-function createDaysForNextMonth(year: string | number, month: string | number) {
+function createDaysForNextMonth(year: any, month: any) {
   const lastDayOfTheMonthWeekday = getWeekday(
     `${year}-${month}-${currentMonthDays.length}`
   );
@@ -104,10 +96,10 @@ const Calendar = ({
   setShowCalendar,
 }: Props) => {
   const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const [currentYear, setCurrentYear] = useState<number | string | undefined>(
+  const [currentYear, setCurrentYear] = useState<number | string | any>(
     INITIAL_YEAR
   );
-  const [currentMonth, setCurrentMonth] = useState<number | string | undefined>(
+  const [currentMonth, setCurrentMonth] = useState<number | string | any>(
     INITIAL_MONTH
   );
 
@@ -124,8 +116,8 @@ const Calendar = ({
     );
     previousMonthDays = createDaysForPreviousMonth(
       selectedMonth.format('YYYY'),
-      selectedMonth.format('M'),
-      currentMonthDays[0]
+      selectedMonth.format('M')
+      // currentMonthDays[0]
     );
     nextMonthDays = createDaysForNextMonth(
       selectedMonth.format('YYYY'),
@@ -137,14 +129,15 @@ const Calendar = ({
   const updateMonth = (action: string) => {
     if (action === 'increment') {
       if (
-        dayjs(selectedMonth).add(1, 'month').format('YYYY') > dayjs().year()
+        (dayjs(selectedMonth).add(1, 'month').format('YYYY') as any) >
+        dayjs().year()
       ) {
         return;
       }
       selectedMonth = dayjs(selectedMonth).add(1, 'month');
     } else if (action === 'decrement') {
       if (
-        dayjs(selectedMonth).subtract(1, 'month').format('YYYY') <
+        (dayjs(selectedMonth).subtract(1, 'month').format('YYYY') as any) <
         dayjs().year()
       ) {
         return;
@@ -158,7 +151,7 @@ const Calendar = ({
     updateDays();
   };
   const renderDays = () => {
-    return days.map((day, index) => {
+    return days.map((day: any, index) => {
       var bgColor;
       if (!day.isCurrentMonth) {
         bgColor = 'bg-grey-100';
