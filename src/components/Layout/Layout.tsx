@@ -23,7 +23,8 @@ const Layout = ({ children }: Props) => {
   // const idUser = useIdUsers();
   // const idUser = useIdUsers();
   const { isLogin, setIsLogin } = useUserInfo();
-
+  console.log(isValid);
+  console.log(authCookies);
   return (
     <main className="w-screen h-screen overflow-x-hidden overflow-y-auto">
       <Head>

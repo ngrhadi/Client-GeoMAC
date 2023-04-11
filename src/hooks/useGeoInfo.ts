@@ -1,5 +1,6 @@
 import { API } from '@/constant';
 import { useToken } from '@/context/UserContext';
+import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
@@ -31,14 +32,13 @@ const useGeoInfo = () => {
   const router = useRouter();
   const [data, setData] = useState<GeoInfo[]>();
   const [loading, setLoading] = useState(false);
-  const token = useToken();
 
   useEffect(() => {
     setLoading(true);
     try {
       API.get('/add-project/info', {
         headers: {
-          Authorization: 'Bearer ' + token,
+          Authorization: 'Bearer ' + Cookies.get('token'),
         },
       }).then((res) => {
         let value = res.data;
@@ -53,7 +53,7 @@ const useGeoInfo = () => {
       router.push('/error');
     }
     return () => {};
-  }, [router, token]);
+  }, [router]);
 
   return {
     data,

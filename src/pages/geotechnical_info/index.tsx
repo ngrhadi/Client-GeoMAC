@@ -1,8 +1,10 @@
 import useGeoInfo from '@/hooks/useGeoInfo';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { default as dayjs } from 'dayjs';
 import PlusIcon from '@/assets/PlusIcon';
 import { useRouter } from 'next/router';
+import useIdProject from '@/hooks/useIdProject';
+import BreadCrumb from '@/components/Ui/BreadCrumb';
 
 const Page = () => {
   const { data, loading } = useGeoInfo();
@@ -10,6 +12,7 @@ const Page = () => {
 
   return (
     <div className="w-full">
+      <BreadCrumb title="Geotechnical Info" />
       <div className="flex flex-row justify-between mt-5">
         <p className="text-lg">Total Data {data?.length}</p>
         <button
@@ -25,8 +28,18 @@ const Page = () => {
         <div>
           {data?.map((item) => (
             <div
-              className="w-full bg-yellow-300 text-black p-4 gap-10 my-3 rounded-xl"
+              className="w-full hover:cursor-pointer hover:bg-yellow-300/70 bg-yellow-300 text-black p-4 gap-10 my-3 rounded-xl"
               key={item.id}
+              onClick={() => {
+                // setIdProject(item.id);
+                router.push({
+                  pathname: `/geotechnical_info/${item.id}`,
+                  // pathname: `/geotechnical_info`,
+                  // query: {
+                  //   id: JSON.stringify(item.id),
+                  // },
+                });
+              }}
             >
               <div className="flex flex-row justify-between">
                 <div>

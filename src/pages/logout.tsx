@@ -12,6 +12,7 @@ const Page = () => {
   useEffect(() => {
     setIsValid(false);
     Cookies.remove('_cxrf');
+    Cookies.remove('token');
 
     router.push('/');
     idUser('');

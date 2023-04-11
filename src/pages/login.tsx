@@ -61,6 +61,11 @@ const LoginPage = ({ setIsLogin }: Props) => {
             sameSite: 'strict',
             secure: true,
           });
+          Cookies.set('token', value?.data?.token, {
+            expires: 60 * 60 * 1000,
+            sameSite: 'strict',
+            secure: true,
+          });
 
           console.log();
           return res.data;
