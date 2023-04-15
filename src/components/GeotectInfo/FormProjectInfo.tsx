@@ -36,6 +36,7 @@ export type ProjectInfoTypes = z.infer<typeof ProjectInfo>;
 
 type ProjectInfoForm = ProjectInfoTypes & {
   onChangeField: (e: Partial<ProjectInfoTypes>) => void;
+  isEdit?: boolean;
 };
 
 const FormProjectInfo = ({
@@ -51,11 +52,13 @@ const FormProjectInfo = ({
   project_possession_date,
   project_completion_date,
   onChangeField,
+  isEdit,
 }: ProjectInfoForm) => {
   const currentDate = new Date();
   const years = currentDate.getFullYear();
   const [showCalendar1, setShowCalendar1] = useState(false);
   const [showCalendar2, setShowCalendar2] = useState(false);
+  const [fetchState, setFetchState] = useState(false);
   const [selectedDate1, setSelectedDate1] = useState('');
   const [selectedDate2, setSelectedDate2] = useState(project_completion_date);
   const [suggestionState, setSuggestionState] = useState<
@@ -64,11 +67,14 @@ const FormProjectInfo = ({
 
   useEffect(() => {
     if (!state) return;
-    if (state.length > 1) {
+    if (state.length == 3) setFetchState(true);
+
+    if (fetchState) {
       API.get('/data/negeri.json').then((res) => {
         setSuggestionState(res.data.negeri_my);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   const valueFilter =
@@ -80,6 +86,15 @@ const FormProjectInfo = ({
 
   const handleShowCalendar1 = () => setShowCalendar1(!showCalendar1);
   const handleShowCalendar2 = () => setShowCalendar2(!showCalendar2);
+
+  const handleFormatDateEdit = (e: string) => {
+    if (e.length === 0) return;
+    const edit_year = new Date(e).getFullYear();
+    const edit_month = new Date(e).getMonth();
+    const edit_day = new Date(e).getDate();
+
+    return `${edit_year}/${edit_month}/${edit_day}`;
+  };
 
   return (
     <div className="overflow-y-scroll w-full">
@@ -218,7 +233,7 @@ const FormProjectInfo = ({
           onShowCalendar={handleShowCalendar1}
           required={true}
           autoComplete={'off'}
-          value={project_possession_date}
+          value={handleFormatDateEdit(project_possession_date)}
           onChange={(e) =>
             onChangeField({
               project_possession_date: e.target.value,
@@ -250,7 +265,7 @@ const FormProjectInfo = ({
           onShowCalendar={handleShowCalendar2}
           required={true}
           autoComplete={'off'}
-          value={project_completion_date}
+          value={handleFormatDateEdit(project_completion_date)}
           onChange={(e) =>
             onChangeField({ project_completion_date: e.target.value })
           }

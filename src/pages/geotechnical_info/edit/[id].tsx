@@ -11,7 +11,11 @@ import { useNameCtx } from '@/context/UserContext';
 import { useStepForm } from '@/hooks/useStepForm';
 import { Tab } from '@headlessui/react';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
 import React, { FormEvent, useCallback, useEffect, useState } from 'react';
+import { GeoInfo } from '../../../hooks/useGeoInfo';
+import { GetServerSideProps } from 'next';
+import { TypeOf } from 'zod';
 
 interface FormData {
   state: string;
@@ -34,29 +38,37 @@ interface FormData {
   doc_path: FileList | object | null;
 }
 
-const INITIAL_DATA = {
-  state: '',
-  district: '',
-  project_name: '',
-  project_contractor: '',
-  project_cost: '',
-  project_cost_geotechnical: '',
-  project_duration: '',
-  project_procurement_method: '',
-  project_implementation_method: '',
-  project_possession_date: '',
-  project_completion_date: '',
-  treatment: '',
-  treatment_chainage: '',
-  treatment_notes: '',
-  instrumentation_type: '',
-  it_chainage: '',
-  it_notes: '',
-  doc_path: null,
-};
+interface Props {
+  dataQuery: GeoInfo | any;
+}
 
-const Page = () => {
-  const [data, setData] = useState(INITIAL_DATA);
+const Page = ({ dataQuery }: Props) => {
+  const router = useRouter();
+
+  const {
+    id,
+    state,
+    district,
+    project_name,
+    project_contractor,
+    project_cost,
+    project_cost_geotechnical,
+    project_duration,
+    project_procurement_method,
+    project_implementation_method,
+    project_possession_date,
+    project_completion_date,
+    treatment,
+    treatment_chainage,
+    treatment_notes,
+    instrumentation_type,
+    it_chainage,
+    it_notes,
+    doc_path,
+    doc_name,
+  } = dataQuery;
+  const [data, setData] = useState(dataQuery);
+  const [oldPath, setOldPath] = useState<string[] | undefined>();
 
   function onChangeField(val: Partial<FormData>) {
     setData((prev: any) => {
@@ -74,9 +86,26 @@ const Page = () => {
     nextStep,
     goToFirs,
   } = useStepForm([
-    <FormProjectInfo key={1} {...data} onChangeField={onChangeField} />,
-    <FormWorkshop key={2} {...data} onChangeField={onChangeField} />,
-    <FormFileUpload key={3} {...data} onChangeField={onChangeField} />,
+    <FormProjectInfo
+      key={1}
+      {...data}
+      onChangeField={onChangeField}
+      isEdit={true}
+      doc_name={doc_name}
+    />,
+    <FormWorkshop
+      key={2}
+      {...data}
+      onChangeField={onChangeField}
+      isEdit={true}
+    />,
+    // <FormFileUpload
+    //   key={3}
+    //   {...data}
+    //   onChangeField={onChangeField}
+    //   isEdit={true}
+    //   setOldPath={oldPath}
+    // />,
   ]);
 
   const [open, setOpen] = useState(false);
@@ -88,7 +117,7 @@ const Page = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   // const submitDataForm = useCallback((e: FormEvent) => {}, []);
-
+  console.log('id', id);
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!isLastStep) return nextStep();
@@ -97,13 +126,15 @@ const Page = () => {
     // goToFirs();
   }
 
+  console.log(doc_path);
+
   useEffect(() => {
     if (agreement === false) {
       return;
     } else {
       try {
-        API.post(
-          '/add-project/info',
+        API.put(
+          `/project/edit/geo-info/${id}`,
           {
             data: {
               state: data.state,
@@ -128,8 +159,8 @@ const Page = () => {
           .then((res) => {
             let value = res.data;
             let idProject = value?.data[0]?.id;
-            API.post(
-              `/add-project/workshop/${idProject}`,
+            API.put(
+              `/project/edit/geo-workshop/${idProject}`,
               {
                 data: {
                   treatment: data.treatment,
@@ -147,30 +178,40 @@ const Page = () => {
               }
             )
               .then((res2) => {
-                let fileUploadPath = new FormData();
-                var imageFile = data.doc_path as FileList | null | any;
+                router.push('/');
+                setIsOpenAlert(true);
+                setIsSuccess(true);
+                return res2.data;
+                // let fileUploadPath = new FormData();
+                // var imageFile = data.doc_path as FileList | null | any;
 
-                for (let idx = 0; idx < imageFile?.length; idx++) {
-                  fileUploadPath.append('doc_path', imageFile[idx]);
-                }
+                // for (let idx = 0; idx < imageFile?.length; idx++) {
+                //   fileUploadPath.append('doc_path', imageFile[idx]);
+                // }
 
-                API.post(`add-project/file/${idProject}`, fileUploadPath, {
-                  headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: 'Bearer ' + Cookies.get('token'),
-                  },
-                })
-                  .then((res) => {
-                    setData(INITIAL_DATA);
-                    goToFirs();
-                    setIsOpenAlert(true);
-                    setIsSuccess(true);
-                    return res.data;
-                  })
-                  .catch((err) => {
-                    setErrorMessage(err.message);
-                    setIsError(true);
-                  });
+                // // if (oldPath !== undefined) {
+                // //   for (let idx = 0; idx < oldPath.length; idx++) {
+                // //     fileUploadPath.append('doc_path', oldPath[idx]);
+                // //   }
+                // // }
+
+                // API.put(`/project/edit/geo-file/${idProject}`, fileUploadPath, {
+                //   headers: {
+                //     'Content-Type': 'multipart/form-data',
+                //     Authorization: 'Bearer ' + Cookies.get('token'),
+                //   },
+                // })
+                //   .then((res) => {
+                //     // setData(INITIAL_DATA);
+                //     goToFirs();
+                //     setIsOpenAlert(true);
+                //     setIsSuccess(true);
+                //     return res.data;
+                //   })
+                //   .catch((err) => {
+                //     setErrorMessage(err.message);
+                //     setIsError(true);
+                //   });
               })
               .catch((err) => {
                 setIsError(true);
@@ -192,7 +233,7 @@ const Page = () => {
 
   return (
     <>
-      <BreadCrumb title="Geotechnical Info" nameProject="" />
+      <BreadCrumb title="Geotechnical Info" nameProject="" isEdit={true} />
       <div className="relative w-full mt-5 lg:mt-10 ">
         <div className="flex w-full h-10 justify-between align-middle items-center">
           <h1 className="text-xl lg:text-2xl mb-2">
@@ -270,3 +311,24 @@ const Page = () => {
 };
 
 export default Page;
+
+export const getServerSideProps: GetServerSideProps<{
+  dataQuery: GeoInfo;
+}> = async (ctx) => {
+  const id = ctx?.params?.id as string;
+  let loading = true;
+  let data = await API.get(`/project/${id}`)
+    .then((res) => {
+      loading = false;
+      return res.data?.data;
+    })
+    .catch((err) => {
+      loading = false;
+    });
+
+  return {
+    props: {
+      dataQuery: data,
+    },
+  };
+};

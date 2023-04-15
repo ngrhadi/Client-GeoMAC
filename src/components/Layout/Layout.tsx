@@ -8,6 +8,7 @@ import Footer from './Footer';
 import HelperPage from '../Auth/HelperPage';
 import Cookies from 'js-cookie';
 import useAuthCookies from '@/hooks/useAuthCookies';
+import { geomac } from '@/utils/color';
 
 interface Props {
   children: React.ReactNode;
@@ -23,8 +24,7 @@ const Layout = ({ children }: Props) => {
   // const idUser = useIdUsers();
   // const idUser = useIdUsers();
   const { isLogin, setIsLogin } = useUserInfo();
-  console.log(isValid);
-  console.log(authCookies);
+
   return (
     <main className="w-screen h-screen overflow-x-hidden overflow-y-auto">
       <Head>
@@ -36,7 +36,7 @@ const Layout = ({ children }: Props) => {
       {isValid === true ?? authCookies.length > 0 ? (
         <Header sideBar={sideBar} setSidebar={setSidebar} />
       ) : null}
-      <section className="max-w-2xl mx-auto items-center align-middle lg:min-w-[70rem] md:min-w-[30rem] px-5 md:px-20 lg:px-44 mb-20 mt-2">
+      <section className="max-w-2xl relative mx-auto items-center align-middle lg:min-w-[70rem] md:min-w-[30rem] px-5 md:px-20 lg:px-44 mb-20 mt-2">
         <UserContext.Provider value={store}>
           {isValid === true ?? authCookies.length > 0 ? (
             <>{children}</>
@@ -59,7 +59,9 @@ const Layout = ({ children }: Props) => {
         </UserContext.Provider>
       </section>
       <footer className="absolute bottom-0 w-screen">
-        <div className="bg-zinc-700 md:bg-[#f3e858] lg:bg-[#f3e858] text-[#000000]">
+        <div
+          className={`bg-zinc-700 md:bg-[#f3e858] lg:bg-[#f3e858] text-[#000000]`}
+        >
           <Footer
             setHelperRoute={setHelperRoute}
             setHelperParams={setHelperParams}

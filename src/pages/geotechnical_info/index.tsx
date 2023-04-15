@@ -41,17 +41,21 @@ const Page = () => {
                 });
               }}
             >
-              <div className="flex flex-row justify-between">
+              <div className="flex flex-col justify-between">
                 <div>
-                  <p className="text-2xl font-bold">{item.project_name}</p>
-                  <p>{item.project_contractor}</p>
+                  <p className="text-xl lg:text-2xl font-bold">
+                    {item.project_name}
+                  </p>
+                  <p className="text-xs lg:text-base">
+                    {item.project_contractor}
+                  </p>
                 </div>
-                <div>
-                  <p>{item.district}</p>
-                  <p>{item.state}</p>
-                  <small>
+                <div className="w-[100%] flex items-center gap-2 lg:gap-4 justify-end">
+                  <p className="text-xs lg:text-base">{item.district}</p>
+                  <p className="text-xs lg:text-base">{item.state}</p>
+                  <p className="text-xs lg:text-base">
                     {dayjs(item?.created_at?.toString()).format('DD/MM/YYYY')}
-                  </small>
+                  </p>
                 </div>
               </div>
             </div>
